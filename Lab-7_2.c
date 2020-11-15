@@ -6,7 +6,7 @@
 #define _Low -100
 #define _High 100
 
-int* init(int *a, int *n);  // ініціалізація масива та вивід його вмісту на екран
+void init(int *a, int *n);  // ініціалізація масива та вивід його вмісту на екран
 int minABS(const int *arr, int *n); // мінімальний за модулем елемент масиву
 void dobutok00(const int *arr, int *n); //  добуток елементів масиву, розташованих між першим й останнім нульовими елементами
 
@@ -39,11 +39,11 @@ int main(void) {
 ///////////////////////////////////////////////////////////////////////////
 int minABS(const int *arr, int *n)
 {
-	int min = arr[0];
+	int min = 777;
 
-	for (int i = 1; i < *n; i++)
+	for (int i = 0; i < *n; i++)
 	{
-		if (abs(arr[i]) < abs(arr[i-1]))
+		if (abs(arr[i]) < abs(min))
 		{
 			min = arr[i];
 		}
@@ -109,7 +109,7 @@ return;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-int* init(int *a, int *n){
+void init(int *a, int *n){
 const int Low = _Low, High = _High; 
 srand((unsigned)time(0)); // для генерації нових чисел кожного разу при запуску програми
 printf("\n");
@@ -122,5 +122,5 @@ for (int i = 0; i < *n; i++)
 	{
 		printf("\na[%d] = %d", i, a[i]);
 	}
-return a;
+return;
 }
