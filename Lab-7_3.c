@@ -3,76 +3,94 @@
 #include <math.h>
 #include <time.h>
 
-#define _Low -100
-#define _High 100
-#define size_n 3
-#define size_m 4
-int minn = 0;
+#define _Low -100 // мінімальне число для генерації випадкових чисел
+#define _High 100 // максимальне число для генерації випадкових чисел
+int minn = -1, *pMINN = NULL; // індекс рядка, в якому було знайдено мінімальний добуток рядка
 
-int* init(int a[][size_m]);
-void print_mas(char name, int n, int a[][size_m]);
-void dob_n(int (arr)[size_n][size_m]);
-int* dell_min_dob(int b[][size_m], int a[][size_m], int min);
-
+void init(int *size_n, int *size_m, int a[][*size_m]);
+void print_mas(int *size_n, int *size_m, int a[][*size_m]);
+void dob_n(int *size_n, int *size_m, int a[][*size_m]);
+void dell_min_dob(int *size_n, int *size_m, int a[][*size_m]);
 
 int main(void) {
 	start_cfg();
+	pMINN = &minn; // вказівник на індекс рядка, в якому було знайдено мінімальний добуток рядка
 
-	int a[size_n][size_m]; // масив "а"
-	int b[size_n-1][size_m];
-	init(a);
-	print_mas('a', size_n, a);
+	int n, m, *size_n = NULL, *size_m = NULL;
+	
+	size_n = &n; // вказівник на кількість рядків
+	size_m = &m; // вказівник на кількість стовпців
+	
+	printf("\nКількість рядків = ");
+	scanf("%d", size_n);
 
-	dob_n(a);
-
-	dell_min_dob(b, a, minn);
-
-	printf("\n");
-	print_mas('b', size_n-1, b);
+	printf("Кількість стовпців = ");
+	scanf("%d", size_m);
+	
+	int a[*size_n][*size_m]; // масив "а"
+	init(size_n, size_m, a);
+	print_mas(size_n, size_m, a);
+	dob_n(size_n, size_m, a);
+	dell_min_dob(size_n, size_m, a);
+	print_mas(size_n, size_m, a);
 
 	end_cfg();
 	return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////
-int* init(int a[][size_m]){
+void init(int *size_n, int *size_m, int a[][*size_m]){
 const int Low = _Low, High = _High; 
 srand((unsigned)time(0));
 
-for (int i = 0; i < size_n; i++)
+for (int i = 0; i < *size_n; i++)
 {
-	for (int j = 0; j < size_m; j++)
+	for (int j = 0; j < *size_m; j++)
 	{
 		a[i][j] =  Low + rand() % (High - Low + 1);
 	}
 }
-return *a;
+return;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-void print_mas(char name, int n, int a[][size_m]){
-	printf("\r\n\n Масив:\n");
-	for (int i = 0; i < n; i++)
+void print_mas(int *size_n, int *size_m, int a[][*size_m]){
+		
+	if (*size_n == 1 && *pMINN != -1)
 	{
-		for (int j = 0; j < size_m; j++)
+		SetColor(12,0);
+		printf("\r\n\n У масиві лише один рядок, після його видалення, немає, що виводити на екран");
+		SetColor(10,0);
+		end_cfg();
+		exit(1);
+	}
+	if (*pMINN != -1)
+	{
+		*size_n-=1;
+	}
+
+	printf("\r\n\n Масив:\n");
+	for (int i = 0; i < *size_n; i++)
+	{
+		for (int j = 0; j < *size_m; j++)
 		{
-			printf("%c[%d][%d] = %3d\t", name, i, j, a[i][j]);
+			printf("a[%d][%d] = %3d\t", i, j, a[i][j]);
 		}
 		printf("\n");
 	}
 }
 
+
 ///////////////////////////////////////////////////////////////////////////
-void dob_n(int (arr)[size_n][size_m])
+void dob_n(int *size_n, int *size_m, int arr[][*size_m])
 {
 	long int dob = 1;
 	_Bool check = 0;
 	int min_dob = 0;
 	int min_dob_i = 0;
 	printf("\n");
-	for (int i = 0; i < size_n; i++)
+	for (int i = 0; i < *size_n; i++)
 	{
-		for (int j = 0; j < size_m; j++)
+		for (int j = 0; j < *size_m; j++)
 		{
 			dob *= arr[i][j];
 		}
@@ -90,25 +108,19 @@ void dob_n(int (arr)[size_n][size_m])
 		dob = 1;
 	}
 	printf("\n Мінімальний добуток в %d рядку (a[%d][*])", min_dob_i+1, min_dob_i);
-	minn=min_dob_i;
+	*pMINN=min_dob_i;
 return;
 }
 
-///////////////////////////////////////////////////////////////////////////
-int* dell_min_dob(int b[][size_m], int a[][size_m], int min){
-	int en = 0;
+void dell_min_dob(int *size_n, int *size_m, int a[][*size_m]){
 
-			for (int i = 0; i < size_n-1; i++)
+			for (int i = *pMINN; i < *size_n-1; i++)
 			{		
-				if (i == min)
+				for (int j = 0; j < *size_m; j++)
 				{
-					en = 1;
-				}
-				for (int j = 0; j < size_m; j++)
-				{
-					b[i][j] = a[i+en][j];
+					a[i][j] = a[i+1][j];
 				}
 			}
 	
-return *b;
+return;
 }
